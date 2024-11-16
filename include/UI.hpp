@@ -12,4 +12,5 @@ struct CircleUI{
 	Vector2 center;
 	Vector2 start_center;
 	Color color{BLACK};
+	Skills skill;
 };
