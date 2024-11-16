@@ -27,6 +27,9 @@ public:
     Rectangle getBody(){ return body; }
     Vector2 getPos(){ return {body.x, body.y}; }
 
+	int getSpeed(){ return speed; }
+	void setSpeed(int newSpeed){ speed = newSpeed; }
+
     std::string getDirection();
 
     void Move(float dt);
