@@ -36,4 +36,5 @@ public:
     void Animate();
 
     Player(const char* texture_path, Vector2 pos, int speed);
+    Player();
 };

@@ -136,3 +136,6 @@ Player::Player(const char* texture_path, Vector2 pos, int speed) : body{pos.x, p
 		CreateSpriteAnimation(texture, 11, walkRightRect, 6), //7
 	};
 }
+
+Player::Player(){
+}

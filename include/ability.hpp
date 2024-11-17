@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include <raylib.h>
 
 enum class Abilities{
@@ -39,7 +41,28 @@ public:
 
 	void Draw();
 
-	AbilityUI(float radius, Vector2 center, Color color, Abilities ability);
+	AbilityUI(float radius, Vector2 center, Color color, Abilities ability, float timer);
 	AbilityUI();
 
+};
+
+class AbilityManager{
+private:
+	std::vector<AbilityUI> circs;
+
+	int distCross;
+	int distLines;
+
+	int isStoringCircCoord;
+	int isDrawingCircs;
+
+	void SetCircleCoord();
+	void MakeCircleBigger();
+	void CallAbility(AbilityUI& aui);
+public:
+
+	void Update();
+	void Draw();
+
+	AbilityManager();
 };
