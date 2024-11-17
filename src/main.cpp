@@ -6,10 +6,10 @@
 #define MAX_FPS 60
 
 #include "player.hpp"
-#include "UI.hpp"
+#include "ability.hpp"
 
 static std::unique_ptr<Player> player;
-static std::vector<CircleUI> circs;
+static std::vector<AbilityUI> circs;
 static int rad;
 
 static int distCross;
@@ -20,131 +20,130 @@ static bool isDrawingCircs;
 
 void SetCircleCoord();
 void MakeCircleBigger();
+void CallAbility(Abilities& ability);
 
 int main(){
+    InitWindow(1920, 1080, "Melieska p0.1");
 
-	InitWindow(1920, 1080, "Melieska p0.1");
+    player = std::make_unique<Player>(Player("res/img/player_atlas.png", {0,0}, 500));
+    rad = 40;
 
+    for(int i=0;i<6;i++)
+        circs.push_back(AbilityUI(rad, {0,0}, BLACK, Abilities::None));
 
-	player = std::make_unique<Player>(Player("res/img/player_atlas.png", {0,0}, 500));
-	rad = 40;
+    distCross = 45*2;
+    distLines = 24*2;
 
-	for(int i=0;i<6;i++)
-		circs.push_back({(float)rad, {0,0}});
+    isStoringCircCoord = false;
+    isDrawingCircs = false;
 
-	distCross = 45*2;
-	distLines = 24*2;
+    circs[0].setAbility(Abilities::FastWalk);
+    circs[0].setColor(RED);
 
-	isStoringCircCoord = false;
-	isDrawingCircs = false;
+    SetTargetFPS(MAX_FPS);
+    while(!WindowShouldClose()){
+        player->Move(GetFrameTime());
 
-	circs[0].ability = Abilities::FastWalk;
-	circs[0].start_color = RED;
-	circs[0].color = RED;
+        isDrawingCircs = false;
+        isStoringCircCoord = false;
 
-	SetTargetFPS(MAX_FPS);
-	while(!WindowShouldClose()){
-		player->Move(GetFrameTime());
+        if(IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)){
+            SetCircleCoord();
+        }
 
-		isDrawingCircs = false;
-		isStoringCircCoord = false;
+        MakeCircleBigger();
 
-		if(IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)){
-			SetCircleCoord();
-		}
+        BeginDrawing();
 
+        ClearBackground(GRAY);
 
-		MakeCircleBigger();
+        player->Animate();
 
-		BeginDrawing();
+        if(isDrawingCircs)
+            for(auto& e : circs)
+            e.Draw();
 
-		ClearBackground(GRAY);
+        DrawText(std::to_string(player->getSpeed()).c_str(), 0, 0, 35, BLACK);
 
-		player->Animate();
+        EndDrawing();
+    }
 
-		if(isDrawingCircs)
-			for(auto& e : circs)
-			DrawCircleV(e.center, e.radius, e.color);
+    CloseWindow();
 
-		DrawText(std::to_string(player->getSpeed()).c_str(), 0, 0, 35, BLACK);
-
-		EndDrawing();
-	}
-
-	CloseWindow();
-
-	return 0;
+    return 0;
 }
 
 void SetCircleCoord(){
-	isStoringCircCoord = true;
-	if(isStoringCircCoord){
-		Vector2 mpos = GetMousePosition();
-		circs[0].center = {mpos.x - distCross, mpos.y + distLines};
-		circs[1].center = {mpos.x, mpos.y - distCross};
-		circs[2].center = {mpos.x + distCross, mpos.y - distLines};
-		circs[3].center = {mpos.x + distCross, mpos.y + distLines};
-		circs[4].center = {mpos.x, mpos.y + distCross};
-		circs[5].center = {mpos.x - distCross, mpos.y - distLines};
-		for(auto& e:circs)
-		e.start_center = e.center;
-	}
-	isStoringCircCoord = false;
+    isStoringCircCoord = true;
+    if(isStoringCircCoord){
+        Vector2 mpos = GetMousePosition();
+        circs[0].setCenter({mpos.x - distCross, mpos.y + distLines});
+        circs[0].setStartCenter({mpos.x - distCross, mpos.y + distLines});
+        circs[1].setCenter({mpos.x, mpos.y - distCross});
+        circs[1].setStartCenter({mpos.x, mpos.y - distCross});
+        circs[2].setCenter({mpos.x + distCross, mpos.y - distLines});
+        circs[2].setStartCenter({mpos.x + distCross, mpos.y - distLines});
+        circs[3].setCenter({mpos.x + distCross, mpos.y + distLines});
+        circs[3].setStartCenter({mpos.x + distCross, mpos.y + distLines});
+        circs[4].setCenter({mpos.x, mpos.y + distCross});
+        circs[4].setStartCenter({mpos.x, mpos.y + distCross});
+        circs[5].setCenter({mpos.x - distCross, mpos.y - distLines});
+        circs[5].setStartCenter({mpos.x - distCross, mpos.y - distLines});
+    }
+    isStoringCircCoord = false;
+}
+
+void CallAbility(AbilityUI& aui){
+    switch(aui.getAbility()){
+        case Abilities::FastWalk:{
+            player->setSpeed(600);
+            break;
+        }
+
+        default:
+        break;
+    }
 }
 
 void MakeCircleBigger(){
-	for(int i=0;i<circs.size();i++){
-		auto& e = circs[i];
-		if(IsMouseButtonDown(MOUSE_BUTTON_RIGHT)){
-			isDrawingCircs = true;
-			if(isDrawingCircs && CheckCollisionPointCircle(GetMousePosition(), e.center, e.radius)){
-				e.radius = rad + 10;
-				e.color = {(unsigned char)(e.start_color.r-70), (unsigned char)(e.start_color.g-70), (unsigned char)(e.start_color.b-70), 255};
-				switch(i){
-					case 0:
-						e.center.x = e.start_center.x - 7;
-						e.center.y = e.start_center.y + 7;
-					break;
+    for(int i=0;i<circs.size();i++){
+        auto& e = circs[i];
+        if(IsMouseButtonDown(MOUSE_BUTTON_RIGHT)){
+            isDrawingCircs = true;
+            if(isDrawingCircs && CheckCollisionPointCircle(GetMousePosition(), e.getCurrentCenter(), e.getRadius())){
+                e.setRadius(rad + 10);
+                e.setColor({(unsigned char)(e.getStartColor().r-70), (unsigned char)(e.getStartColor().g-70), (unsigned char)(e.getStartColor().b-70), 255});
+                switch(i){
+                    case 0:
+                        e.setCenter({e.getStartCenter().x - 7, e.getStartCenter().y + 7});
+                    break;
 
-					case 1:
-						e.center.y = e.start_center.y - 7;
-					break;
+                    case 1:
+                        e.setCenter({e.getCurrentCenter().x, e.getStartCenter().y - 7});
+                    break;
 
-					case 2:
-						e.center.x = e.start_center.x + 7;
-						e.center.y = e.start_center.y - 7;
-					break;
+                    case 2:
+                        e.setCenter({e.getStartCenter().x + 7, e.getStartCenter().y - 7});
+                    break;
 
-					case 3:
-						e.center.x = e.start_center.x + 7;
-						e.center.y = e.start_center.y + 7;
-					break;
+                    case 3:
+                        e.setCenter({e.getStartCenter().x + 7, e.getStartCenter().y + 7});
+                    break;
 
-					case 4:
-						e.center.y = e.start_center.y + 7;
-					break;
+                    case 4:
+                        e.setCenter({e.getCurrentCenter().x, e.getStartCenter().y + 7});
+                    break;
 
-					case 5:
-						e.center.x = e.start_center.x - 7;
-						e.center.y = e.start_center.y - 7;
-					break;
-				}
-			}else{
-				e.center = e.start_center;
-				e.radius = rad;
-				e.color = e.start_color;
-			}
-		}
-		if(IsMouseButtonReleased(MOUSE_BUTTON_RIGHT))
-			if(IsMouseButtonReleased(MOUSE_BUTTON_RIGHT)){
-				switch(e.ability){
-					case Abilities::FastWalk:
-						player->setSpeed(600);
-					break;
-
-					default:
-					break;
-				}
-			}
-	}
+                    case 5:
+                        e.setCenter({e.getStartCenter().x - 7, e.getStartCenter().y - 7});
+                    break;
+                }
+            }else{
+                e.setCenter(e.getStartCenter());
+                e.setRadius(rad);
+                e.setColor(e.getStartColor());
+            }
+        }
+        if(IsMouseButtonReleased(MOUSE_BUTTON_RIGHT)) CallAbility(e);
+    }
 }
