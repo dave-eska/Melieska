@@ -1,4 +1,5 @@
 #include "ability.hpp"
+#include "global_functions.hpp"
 #include "global_variable.hpp"
 #include "raylib.h"
 #include <string>
@@ -39,7 +40,8 @@ void AbilityUI::Draw(){
 }
 
 void AbilityUI::DrawUI(){
-	DrawText(std::to_string((int)timer).c_str(), 0, 100, 35, BLACK);
+	if(isTimerStart)
+		DrawText(std::to_string((int)timer).c_str(), GetScreenWidth()-75, GetScreenHeight()-75, 60, GetRainbowColor());
 }
 
 void AbilityUI::startTimer(){

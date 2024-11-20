@@ -47,7 +47,7 @@ public:
 	int getIDX(){ return idx; }
 
 	void startTimer();
-	void resetTimer(){ timer = start_timer; }
+	void resetTimer(){ timer = start_timer; isTimerStart = false; }
 	bool isTimerDone(){ return timer <= 0.0f; }
 
 	void Update();
