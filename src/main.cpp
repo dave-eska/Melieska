@@ -31,6 +31,7 @@ int main(){
         player->Animate();
 
 		am.Draw();
+		am.DrawUI();
 
         DrawText(std::to_string(player->getSpeed()).c_str(), 0, 0, 35, BLACK);
 

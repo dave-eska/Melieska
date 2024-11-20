@@ -1,11 +1,49 @@
 #include "ability.hpp"
 #include "global_variable.hpp"
 #include "raylib.h"
+#include <string>
 
 #define RAD 40
 
+void AbilityUI::Update(){
+	if(isTimerStart && timer > 0){
+		timer -= GetFrameTime();
+		switch(getAbility()){
+			case Abilities::FastWalk:{
+				player->setSpeed(600);
+				break;
+			}
+
+			default:
+			break;
+		}
+	}
+
+	if(isTimerDone()){
+		switch(getAbility()){
+			case Abilities::FastWalk:{
+				player->setSpeed(500);
+				break;
+			}
+
+			default:
+			break;
+		}
+		resetTimer();
+	}
+
+}
+
 void AbilityUI::Draw(){
 	DrawCircleV(center, radius, color);
+}
+
+void AbilityUI::DrawUI(){
+	DrawText(std::to_string((int)timer).c_str(), 0, 100, 35, BLACK);
+}
+
+void AbilityUI::startTimer(){
+	isTimerStart = true;
 }
 
 AbilityUI::AbilityUI(float radius, Vector2 center, Color color, Abilities ability, float timer)
@@ -17,8 +55,11 @@ AbilityUI::AbilityUI(){
 
 /* Ability Manager */
 AbilityManager::AbilityManager(){
-	for(int i=0;i<6;i++)
-		circs.push_back(AbilityUI(RAD, {0,0}, BLACK, Abilities::None, 2.0f));
+	for(int i=0;i<6;i++){
+		auto temp = AbilityUI(RAD, {0,0}, BLACK, Abilities::None, 15.0f);
+		temp.setIDX(circs.size());
+		circs.push_back(temp);
+	}
 
 	distCross = 45*2;
 	distLines = 24*2;
@@ -27,7 +68,6 @@ AbilityManager::AbilityManager(){
 	isDrawingCircs = false;
 
 	circs[0].setAbility(Abilities::FastWalk);
-
 }
 
 void AbilityManager::Update(){
@@ -35,13 +75,21 @@ void AbilityManager::Update(){
 	isStoringCircCoord = false;
 
 	if(IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) SetCircleCoord();
+	for(int i=0;i<circs.size();i++){
+		auto& e = circs[i];
+		e.Update();
+		MakeCircleBigger(e, i);
+	}
 
-	MakeCircleBigger();
 }
 
 void AbilityManager::Draw(){
 	if(isDrawingCircs)
 		for(auto& e : circs) e.Draw();
+}
+
+void AbilityManager::DrawUI(){
+	for(auto& e : circs) e.DrawUI();
 }
 
 void AbilityManager::SetCircleCoord(){
@@ -64,57 +112,42 @@ void AbilityManager::SetCircleCoord(){
 	isStoringCircCoord = false;
 }
 
-void AbilityManager::CallAbility(AbilityUI& aui){
-	switch(aui.getAbility()){
-		case Abilities::FastWalk:{
-			player->setSpeed(600);
-			break;
-		}
+void AbilityManager::MakeCircleBigger(AbilityUI& e, int i){
+	if(IsMouseButtonDown(MOUSE_BUTTON_RIGHT)){
+		isDrawingCircs = true;
+		if(isDrawingCircs && CheckCollisionPointCircle(GetMousePosition(), e.getCurrentCenter(), e.getRadius())){
+			e.setRadius(RAD + 10);
+			e.setColor({(unsigned char)(e.getStartColor().r-70), (unsigned char)(e.getStartColor().g-70), (unsigned char)(e.getStartColor().b-70), 255});
+			switch(i){
+				case 0:
+					e.setCenter({e.getStartCenter().x - 7, e.getStartCenter().y + 7});
+				break;
 
-		default:
-		break;
-	}
-}
+				case 1:
+					e.setCenter({e.getCurrentCenter().x, e.getStartCenter().y - 7});
+				break;
 
-void AbilityManager::MakeCircleBigger(){
-	for(int i=0;i<circs.size();i++){
-		auto& e = circs[i];
-		if(IsMouseButtonDown(MOUSE_BUTTON_RIGHT)){
-			isDrawingCircs = true;
-			if(isDrawingCircs && CheckCollisionPointCircle(GetMousePosition(), e.getCurrentCenter(), e.getRadius())){
-				e.setRadius(RAD + 10);
-				e.setColor({(unsigned char)(e.getStartColor().r-70), (unsigned char)(e.getStartColor().g-70), (unsigned char)(e.getStartColor().b-70), 255});
-				switch(i){
-					case 0:
-						e.setCenter({e.getStartCenter().x - 7, e.getStartCenter().y + 7});
-					break;
+				case 2:
+					e.setCenter({e.getStartCenter().x + 7, e.getStartCenter().y - 7});
+				break;
 
-					case 1:
-						e.setCenter({e.getCurrentCenter().x, e.getStartCenter().y - 7});
-					break;
+				case 3:
+					e.setCenter({e.getStartCenter().x + 7, e.getStartCenter().y + 7});
+				break;
 
-					case 2:
-						e.setCenter({e.getStartCenter().x + 7, e.getStartCenter().y - 7});
-					break;
+				case 4:
+					e.setCenter({e.getCurrentCenter().x, e.getStartCenter().y + 7});
+				break;
 
-					case 3:
-						e.setCenter({e.getStartCenter().x + 7, e.getStartCenter().y + 7});
-					break;
-
-					case 4:
-						e.setCenter({e.getCurrentCenter().x, e.getStartCenter().y + 7});
-					break;
-
-					case 5:
-						e.setCenter({e.getStartCenter().x - 7, e.getStartCenter().y - 7});
-					break;
-				}
-			}else{
-				e.setCenter(e.getStartCenter());
-				e.setRadius(RAD);
-				e.setColor(e.getStartColor());
+				case 5:
+					e.setCenter({e.getStartCenter().x - 7, e.getStartCenter().y - 7});
+				break;
 			}
+		}else{
+			e.setCenter(e.getStartCenter());
+			e.setRadius(RAD);
+			e.setColor(e.getStartColor());
 		}
-		if(IsMouseButtonReleased(MOUSE_BUTTON_RIGHT)) CallAbility(e);
 	}
+	if(IsMouseButtonReleased(MOUSE_BUTTON_RIGHT)) e.startTimer();
 }

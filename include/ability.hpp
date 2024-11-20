@@ -20,6 +20,10 @@ private:
 	Abilities ability;
 
 	float timer{0.0f};
+	float start_timer{0.0f};
+	bool isTimerStart{false};
+
+	int idx;
 public:
 	Vector2 center;
 	Vector2 start_center;
@@ -39,7 +43,16 @@ public:
 
 	Abilities getAbility(){ return ability; }
 
+	void setIDX(int idx){ this->idx = idx; }
+	int getIDX(){ return idx; }
+
+	void startTimer();
+	void resetTimer(){ timer = start_timer; }
+	bool isTimerDone(){ return timer <= 0.0f; }
+
+	void Update();
 	void Draw();
+	void DrawUI();
 
 	AbilityUI(float radius, Vector2 center, Color color, Abilities ability, float timer);
 	AbilityUI();
@@ -57,12 +70,12 @@ private:
 	int isDrawingCircs;
 
 	void SetCircleCoord();
-	void MakeCircleBigger();
-	void CallAbility(AbilityUI& aui);
+	void MakeCircleBigger(AbilityUI& e, int i);
 public:
 
 	void Update();
 	void Draw();
+	void DrawUI();
 
 	AbilityManager();
 };
