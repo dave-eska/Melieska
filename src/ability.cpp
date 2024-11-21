@@ -49,7 +49,7 @@ void AbilityUI::startTimer(){
 }
 
 AbilityUI::AbilityUI(float radius, Vector2 center, Color color, Abilities ability, float timer)
-: radius{radius}, center{center}, start_center{center}, color{color}, start_color{color}, ability{ability}, timer{timer}{
+: radius{radius}, center{center}, start_center{center}, color{color}, start_color{color}, ability{ability}, timer{timer}, start_timer{timer}{
 }
 
 AbilityUI::AbilityUI(){
