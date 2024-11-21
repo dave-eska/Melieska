@@ -1,4 +1,5 @@
 #include "ability.hpp"
+#include "tile.hpp"
 #include "world.hpp"
 #include <memory>
 
@@ -16,7 +17,9 @@ int main(){
 
     InitWindow(1920, 1080, "Melieska p0.1");
 
-    player = std::make_unique<Player>(Player("res/img/player_atlas.png", {0,0}, 500));
+	level = new Level("res/levels/test.json");
+
+    player = std::make_unique<Player>(Player("res/img/player_atlas.png", {TILE_SIZE*2,TILE_SIZE*3}, 500, *level->b2world));
 	AbilityManager am;
 
 	camera = { 0 };
@@ -28,7 +31,6 @@ int main(){
 	float minZoom = 0.1f;
     float maxZoom = 3.0f;
 
-	level = std::make_unique<Level>(Level("res/levels/test.json"));
 
 	SetTargetFPS(MAX_FPS);
 	while(!WindowShouldClose()){
@@ -62,6 +64,7 @@ int main(){
 		am.DrawUI();
 
 		DrawText(std::to_string(player->getSpeed()).c_str(), 0, 0, 35, BLACK);
+		DrawFPS(0, GetScreenHeight()-40);
 
 		EndDrawing();
 	}

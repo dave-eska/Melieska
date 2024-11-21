@@ -7,6 +7,7 @@
 #include <json/json.h>
 
 #include "box2d/b2_world.h"
+#include "global_variable.hpp"
 #include "utils/fileUtil.hpp"
 #include "utils/numUtils.hpp"
 
@@ -28,7 +29,30 @@ void Level::Update(float dt){
 void Level::Draw(){
     for(auto& tile : tiles){
         tile->Draw();
+		/*
+		for(b2Fixture* fixture = tile->getB2Body()->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
+			b2Shape* shape = fixture->GetShape();
+
+			if (shape->GetType() == b2Shape::e_polygon) {
+				b2PolygonShape* polyShape = static_cast<b2PolygonShape*>(shape);
+				int vertexCount = polyShape->m_count;
+
+				// Draw the collider outline
+				for (int i = 0; i < vertexCount; ++i) {
+					b2Vec2 vertexA = tile->getB2Body()->GetWorldPoint(polyShape->m_vertices[i]);
+					b2Vec2 vertexB = tile->getB2Body()->GetWorldPoint(polyShape->m_vertices[(i + 1) % vertexCount]);
+
+					b2Vec2 vertexAPixelPos = b2Vec2(vertexA.x * PIXELS_PER_METER, vertexA.y * PIXELS_PER_METER);
+					b2Vec2 vertexBPixelPos = b2Vec2(vertexB.x * PIXELS_PER_METER, vertexB.y * PIXELS_PER_METER);
+
+					// Directly draw using Raylib's DrawLine function
+					// Remember, Raylib uses screen coordinates directly
+					DrawLine(vertexBPixelPos.x, vertexBPixelPos.y, vertexAPixelPos.x, vertexAPixelPos.y, RED);
+				}
+			}
+		}*/
     }
+
 }
 
 Level::Level(){

@@ -43,6 +43,8 @@ public:
     Rectangle getBody(){ return body; }
     std::string getType(){ return type; };
 
+	b2Body* getB2Body(){ return b2body; }
+
     void setSlot(int val){ slot = val; }
 
     void Update();
