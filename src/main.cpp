@@ -24,8 +24,18 @@ int main(){
 	camera.rotation = 0.0f;
 	camera.zoom = 1.0f;
 
+	float minZoom = 0.1f;
+    float maxZoom = 3.0f;
+
 	SetTargetFPS(MAX_FPS);
 	while(!WindowShouldClose()){
+
+		float wheelMove = GetMouseWheelMove();
+		if (wheelMove != 0.0f) {
+			camera.zoom += wheelMove * 0.1f; // Adjust zoom sensitivity if needed
+			if (camera.zoom < minZoom) camera.zoom = minZoom;
+			if (camera.zoom > maxZoom) camera.zoom = maxZoom;
+		}
 
 		player->Move(GetFrameTime());
 		camera.target = (Vector2){ player->getBody().x + (player->getBody().width/2), player->getBody().y + (player->getBody().height/2) };
@@ -35,7 +45,6 @@ int main(){
 		BeginDrawing();
 
 		ClearBackground(GRAY);
-
 
 		BeginMode2D(camera);
 		DrawRectangleRec({500, 750, 75, 75}, GREEN);
