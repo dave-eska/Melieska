@@ -1,4 +1,5 @@
 #include "ability.hpp"
+#include "world.hpp"
 #include <memory>
 
 #include <raylib.h>
@@ -22,10 +23,12 @@ int main(){
 	camera.target = (Vector2){ player->getBody().x + (player->getBody().width/2), player->getBody().y + (player->getBody().height/2) };
 	camera.offset = (Vector2){ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
 	camera.rotation = 0.0f;
-	camera.zoom = 1.0f;
+	camera.zoom = 0.6f;
 
 	float minZoom = 0.1f;
     float maxZoom = 3.0f;
+
+	level = std::make_unique<Level>(Level("res/levels/test.json"));
 
 	SetTargetFPS(MAX_FPS);
 	while(!WindowShouldClose()){
@@ -40,6 +43,8 @@ int main(){
 		player->Move(GetFrameTime());
 		camera.target = (Vector2){ player->getBody().x + (player->getBody().width/2), player->getBody().y + (player->getBody().height/2) };
 
+		level->Update(GetFrameTime());
+
 		am.Update();
 
 		BeginDrawing();
@@ -47,8 +52,10 @@ int main(){
 		ClearBackground(GRAY);
 
 		BeginMode2D(camera);
-		DrawRectangleRec({500, 750, 75, 75}, GREEN);
+
+		level->Draw();
 		player->Animate();
+
 		EndMode2D();
 
 		am.Draw();

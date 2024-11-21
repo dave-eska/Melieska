@@ -1,0 +1,27 @@
+[
+    //0
+    {
+        "name": "air",
+        "type": "special"
+    },
+    //1
+    {
+        "name": "grass",
+        "type": "background",
+        "texture": ["res/img/grass1.png", "res/img/grass1.png"]
+    },
+    //2
+    {
+        "name": "water",
+        "type": "fluid",
+        "fps": [2, 3, 3, 2, 2, 3],
+        "animationOnDefault": true,
+        "texture": ["res/img/water.png", "res/img/water1.png",  "res/img/water2.png", "res/img/water3.png"]
+    },
+    //3
+    {
+        "name": "brickwall",
+        "type": "block",
+        "texture": "res/img/brick_wall.png"
+    },
+]
