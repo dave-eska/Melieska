@@ -18,27 +18,39 @@ int main(){
     player = std::make_unique<Player>(Player("res/img/player_atlas.png", {0,0}, 500));
 	AbilityManager am;
 
-    SetTargetFPS(MAX_FPS);
-    while(!WindowShouldClose()){
-        player->Move(GetFrameTime());
+	camera = { 0 };
+	camera.target = (Vector2){ player->getBody().x + (player->getBody().width/2), player->getBody().y + (player->getBody().height/2) };
+	camera.offset = (Vector2){ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
+	camera.rotation = 0.0f;
+	camera.zoom = 1.0f;
+
+	SetTargetFPS(MAX_FPS);
+	while(!WindowShouldClose()){
+
+		player->Move(GetFrameTime());
+		camera.target = (Vector2){ player->getBody().x + (player->getBody().width/2), player->getBody().y + (player->getBody().height/2) };
 
 		am.Update();
 
-        BeginDrawing();
+		BeginDrawing();
 
-        ClearBackground(GRAY);
+		ClearBackground(GRAY);
 
-        player->Animate();
+
+		BeginMode2D(camera);
+		DrawRectangleRec({500, 750, 75, 75}, GREEN);
+		player->Animate();
+		EndMode2D();
 
 		am.Draw();
 		am.DrawUI();
 
-        DrawText(std::to_string(player->getSpeed()).c_str(), 0, 0, 35, BLACK);
+		DrawText(std::to_string(player->getSpeed()).c_str(), 0, 0, 35, BLACK);
 
-        EndDrawing();
-    }
+		EndDrawing();
+	}
 
-    CloseWindow();
+	CloseWindow();
 
-    return 0;
+	return 0;
 }
