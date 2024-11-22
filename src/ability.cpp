@@ -1,22 +1,32 @@
 #include "ability.hpp"
-#include "global_functions.hpp"
-#include "global_variable.hpp"
-#include "raylib.h"
+
+#include <iostream>
+#include <ostream>
 #include <string>
+
+#include <raylib.h>
+
+#include "global_variable.hpp"
+#include "global_functions.hpp"
 
 #define RAD 40
 
 void AbilityUI::Update(){
 	if(isTimerStart && timer > 0){
 		timer -= GetFrameTime();
-		switch(getAbility()){
-			case Abilities::FastWalk:{
-				player->setSpeed(600);
+		if(applyAbility){
+			switch(getAbility()){
+				case Abilities::FastWalk:{
+					std::string temp = getAbility() == Abilities::FastWalk ? "Fastwalk" : "Not Fastwalk lol kys nerd!";
+					std::cout<< temp <<std::endl;
+					player->setSpeed(600);
+					break;
+				}
+
+				default:
 				break;
 			}
-
-			default:
-			break;
+			applyAbility = false;
 		}
 	}
 
@@ -46,6 +56,7 @@ void AbilityUI::DrawUI(){
 
 void AbilityUI::startTimer(){
 	isTimerStart = true;
+	applyAbility = true;
 }
 
 AbilityUI::AbilityUI(float radius, Vector2 center, Color color, Abilities ability, float timer)
@@ -151,5 +162,5 @@ void AbilityManager::MakeCircleBigger(AbilityUI& e, int i){
 			e.setColor(e.getStartColor());
 		}
 	}
-	if(IsMouseButtonReleased(MOUSE_BUTTON_RIGHT)) e.startTimer();
+	if(IsMouseButtonReleased(MOUSE_BUTTON_RIGHT) && CheckCollisionPointCircle(GetMousePosition(), e.getCurrentCenter(), e.getRadius())) e.startTimer();
 }
