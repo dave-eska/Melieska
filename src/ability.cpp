@@ -15,6 +15,7 @@ void AbilityUI::Update(){
 	if(isTimerStart && timer > 0){
 		timer -= GetFrameTime();
 		if(applyAbility){
+			std::cout<<(int)ability<<std::endl;
 			switch(getAbility()){
 				case Abilities::FastWalk:{
 					std::string temp = getAbility() == Abilities::FastWalk ? "Fastwalk" : "Not Fastwalk lol kys nerd!";
@@ -46,7 +47,7 @@ void AbilityUI::Update(){
 }
 
 void AbilityUI::Draw(){
-	DrawCircleV(center, radius, color);
+	DrawTexturePro(texture, {0, 0, (float)texture.width, (float)texture.height}, {center.x-radius, center.y-radius, radius*2, radius*2}, {0, 0}, 0, WHITE);
 }
 
 void AbilityUI::DrawUI(){
@@ -61,6 +62,7 @@ void AbilityUI::startTimer(){
 
 AbilityUI::AbilityUI(float radius, Vector2 center, Color color, Abilities ability, float timer)
 : radius{radius}, center{center}, start_center{center}, color{color}, start_color{color}, ability{ability}, timer{timer}, start_timer{timer}{
+	texture = LoadTexture("res/img/inventory_outline.png");
 }
 
 AbilityUI::AbilityUI(){
@@ -162,5 +164,7 @@ void AbilityManager::MakeCircleBigger(AbilityUI& e, int i){
 			e.setColor(e.getStartColor());
 		}
 	}
-	if(IsMouseButtonReleased(MOUSE_BUTTON_RIGHT) && CheckCollisionPointCircle(GetMousePosition(), e.getCurrentCenter(), e.getRadius())) e.startTimer();
+	if(IsMouseButtonReleased(MOUSE_BUTTON_RIGHT) && CheckCollisionPointCircle(GetMousePosition(), e.getCurrentCenter(), e.getRadius()) && e.getAbility() != Abilities::None){
+		e.startTimer();
+	}
 }

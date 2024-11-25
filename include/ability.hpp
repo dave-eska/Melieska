@@ -23,6 +23,10 @@ private:
 	float start_timer{0.0f};
 	bool isTimerStart{false};
 
+	bool applyAbility{false};
+
+	Texture2D texture;
+
 	int idx;
 public:
 	Vector2 center;
@@ -45,6 +49,8 @@ public:
 
 	void setIDX(int idx){ this->idx = idx; }
 	int getIDX(){ return idx; }
+
+	bool getApplyAbility(){ return applyAbility; }
 
 	void startTimer();
 	void resetTimer(){ timer = start_timer; isTimerStart = false; }

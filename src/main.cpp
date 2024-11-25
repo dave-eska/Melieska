@@ -31,6 +31,7 @@ int main(){
 	float minZoom = 0.1f;
     float maxZoom = 3.0f;
 
+	isDebugging = false;
 
 	SetTargetFPS(MAX_FPS);
 	while(!WindowShouldClose()){
@@ -41,6 +42,9 @@ int main(){
 			if (camera.zoom < minZoom) camera.zoom = minZoom;
 			if (camera.zoom > maxZoom) camera.zoom = maxZoom;
 		}
+
+		if(IsKeyPressed(KEY_X))
+			isDebugging = !isDebugging;
 
 		player->Move(GetFrameTime());
 		camera.target = (Vector2){ player->getBody().x + (player->getBody().width/2), player->getBody().y + (player->getBody().height/2) };
@@ -63,8 +67,10 @@ int main(){
 		am.Draw();
 		am.DrawUI();
 
-		DrawText(std::to_string(player->getSpeed()).c_str(), 0, 0, 35, BLACK);
-		DrawFPS(0, GetScreenHeight()-40);
+		if(isDebugging){
+			DrawText(std::to_string(player->getSpeed()).c_str(), 0, 0, 35, BLACK);
+			DrawText(std::to_string(GetFPS()).c_str(), 0, GetScreenHeight() - 50, 35, GREEN);
+		}
 
 		EndDrawing();
 	}

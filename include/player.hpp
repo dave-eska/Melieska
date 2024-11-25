@@ -32,8 +32,6 @@ private:
 	b2FixtureDef fixtureDef;
 
 	int speed;
-
-	void SetColliderSize(float width, float height);
 public:
 	Rectangle getBody(){ return body; }
 	Vector2 getPos(){ return {body.x, body.y}; }
