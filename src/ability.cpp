@@ -6,12 +6,11 @@
 
 #include <raylib.h>
 
-#include "global_variable.hpp"
 #include "global_functions.hpp"
 
 #define RAD 40
 
-void AbilityUI::Update(){
+void AbilityUI::Update(Player& player){
 	if(isTimerStart && timer > 0){
 		timer -= GetFrameTime();
 		if(applyAbility){
@@ -20,7 +19,7 @@ void AbilityUI::Update(){
 				case Abilities::FastWalk:{
 					std::string temp = getAbility() == Abilities::FastWalk ? "Fastwalk" : "Not Fastwalk lol kys nerd!";
 					std::cout<< temp <<std::endl;
-					player->setSpeed(600);
+					player.setSpeed(600);
 					break;
 				}
 
@@ -34,7 +33,7 @@ void AbilityUI::Update(){
 	if(isTimerDone()){
 		switch(getAbility()){
 			case Abilities::FastWalk:{
-				player->setSpeed(500);
+				player.setSpeed(500);
 				break;
 			}
 
@@ -69,7 +68,7 @@ AbilityUI::AbilityUI(){
 }
 
 /* Ability Manager */
-AbilityManager::AbilityManager(){
+AbilityManager::AbilityManager(Player& player) : player(player){
 	for(int i=0;i<6;i++){
 		auto temp = AbilityUI(RAD, {0,0}, BLACK, Abilities::None, 15.0f);
 		temp.setIDX(circs.size());
@@ -92,7 +91,7 @@ void AbilityManager::Update(){
 	if(IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) SetCircleCoord();
 	for(int i=0;i<circs.size();i++){
 		auto& e = circs[i];
-		e.Update();
+		e.Update(player);
 		MakeCircleBigger(e, i);
 	}
 

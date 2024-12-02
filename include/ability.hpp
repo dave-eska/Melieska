@@ -1,5 +1,6 @@
 #pragma once
 
+#include "player.hpp"
 #include <vector>
 
 #include <raylib.h>
@@ -56,7 +57,7 @@ public:
 	void resetTimer(){ timer = start_timer; isTimerStart = false; }
 	bool isTimerDone(){ return timer <= 0.0f; }
 
-	void Update();
+	void Update(Player& player);
 	void Draw();
 	void DrawUI();
 
@@ -75,6 +76,8 @@ private:
 	int isStoringCircCoord;
 	int isDrawingCircs;
 
+	Player& player;
+
 	void SetCircleCoord();
 	void MakeCircleBigger(AbilityUI& e, int i);
 public:
@@ -83,5 +86,6 @@ public:
 	void Draw();
 	void DrawUI();
 
+	AbilityManager(Player& player);
 	AbilityManager();
 };

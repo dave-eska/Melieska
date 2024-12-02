@@ -37,7 +37,7 @@ void Player::Move(float dt){
 }
 
 void Player::Animate(){
-	if((IsKeyDown(KEY_W) || IsKeyDown(KEY_S) || IsKeyDown(KEY_A) || IsKeyDown(KEY_D))){
+	if((IsKeyDown(KEY_W) || IsKeyDown(KEY_S) || IsKeyDown(KEY_A) || IsKeyDown(KEY_D)) && !isTyping){
 		if(direction==DIRECTION_UP) current_animation=5;
 		else if(direction==DIRECTION_DOWN) current_animation=1;
 		else if(direction==DIRECTION_LEFT) current_animation=3;
