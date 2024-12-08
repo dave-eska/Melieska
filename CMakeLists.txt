@@ -18,14 +18,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(box2d)
 
-FetchContent_Declare(asio-cmake
-  GIT_REPOSITORY https://github.com/kingsamchen/asio-cmake.git
-  GIT_TAG        origin/master
-)
-
-# Specify asio version
-set(ASIO_CMAKE_ASIO_TAG asio-1-12-2)
-FetchContent_MakeAvailable(asio-cmake)
+add_subdirectory(melnet)
 
 set(CMAKE_CXX_COMPILER g++)
 set(CMAKE_C_COMPILER gcc)
@@ -37,4 +30,4 @@ add_executable(main1 "${MY_SOURCES}")
 
 target_include_directories(main1 PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/")
 
-target_link_libraries(main1 PRIVATE raylib jsoncpp_static box2d asio)
+target_link_libraries(main1 PRIVATE raylib jsoncpp_static box2d melnet)

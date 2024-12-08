@@ -21,6 +21,8 @@ private:
 	float camMax;
 	float camMin;
 
+	float clearChat;
+
 	void TypingCode();
 public:
 	void Update(float dt) override;

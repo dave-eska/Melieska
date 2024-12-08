@@ -22,6 +22,14 @@ void Gameplay::TypingCode(){
 }
 
 void Gameplay::Update(float dt){
+	if(clearChat > 0) clearChat -= GetFrameTime();
+
+	if(clearChat <= 0)
+		chatlog.clear();
+
+	if(clearChat <= 0) clearChat = 10.0f;
+
+
 	float wheelMove = GetMouseWheelMove();
 
 	if(wheelMove != 0.0f) {
@@ -86,6 +94,8 @@ Gameplay::Gameplay() : Scene("Gameplay Test", 0.5){
 	player = new Player("res/img/player_atlas.png", {TILE_SIZE*2,TILE_SIZE*3}, 500, *level->b2world);
 	am = new AbilityManager(*player);
 
-	float minZoom = 0.1f;
-	float maxZoom = 3.0f;
+	camMax = 3.0f;
+	camMin = 0.1f;
+
+	clearChat = 10.0f;
 }

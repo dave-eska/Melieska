@@ -16,9 +16,9 @@ int main(int argc, char *argv[]){
 	std::string appMode = argv[1];
 
 	if(appMode == "server"){
-		std::cout<<"Running server.."<<std::endl;
 	}else if(appMode == "game"){
 		SetTraceLogLevel(LOG_NONE);
+		SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 
 		InitWindow(1920, 1080, "Melieska");
 
