@@ -3,6 +3,8 @@
 #include "global_variable.hpp"
 #include "raylib.h"
 #include "scene.hpp"
+#include <cstring>
+#include <string>
 
 void Gameplay::TypingCode(){
     char c = GetCharPressed();
@@ -22,10 +24,23 @@ void Gameplay::TypingCode(){
 }
 
 void Gameplay::Update(float dt){
-	if(clearChat > 0) clearChat -= GetFrameTime();
+	if(clearChat > 0 && !chatlog.empty()) clearChat -= GetFrameTime();
 
-	if(clearChat <= 0)
+	if(clearChat <= 0){
+		std::string strText;
+		for(auto& e : chatlog){
+			strText.append("\n");
+			strText.append(e);
+		}
+
+		char* text = new char[strText.length() + 1];
+		std::strcpy(text, strText.c_str());
+
+		SaveFileText("chatLogs.txt", text);
+
+		delete[] text;
 		chatlog.clear();
+	}
 
 	if(clearChat <= 0) clearChat = 10.0f;
 
