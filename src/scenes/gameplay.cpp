@@ -3,6 +3,7 @@
 #include "global_variable.hpp"
 #include "raylib.h"
 #include "scene.hpp"
+#include "utils/fileUtil.hpp"
 #include <cstring>
 #include <string>
 
@@ -27,7 +28,7 @@ void Gameplay::Update(float dt){
 	if(clearChat > 0 && !chatlog.empty()) clearChat -= GetFrameTime();
 
 	if(clearChat <= 0){
-		std::string strText;
+		std::string strText = readFile("chatLogs.txt");
 		for(auto& e : chatlog){
 			strText.append("\n");
 			strText.append(e);
