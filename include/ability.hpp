@@ -8,17 +8,25 @@
 enum class Abilities{
 	None,
 	FastWalk,
-	FasterWalk
+	FasterWalk,
 };
 
-class AbilityUI{
+enum class SelectorMode{
+	None,
+	Ability,
+	Emotes,
+};
+
+class Circle{
 private:
 	float radius;
-
 	Color color{BLACK};
 	Color start_color{BLACK};
 
 	Abilities ability;
+
+	Vector2 center;
+	Vector2 start_center;
 
 	float timer{0.0f};
 	float start_timer{0.0f};
@@ -30,8 +38,6 @@ private:
 
 	int idx;
 public:
-	Vector2 center;
-	Vector2 start_center;
 	void setRadius(float newRadius){ radius = newRadius; }
 	void setStartCenter(Vector2 newCenter){ start_center = newCenter; }
 	void setCenter(Vector2 newCenter){ center = newCenter; }
@@ -53,6 +59,9 @@ public:
 
 	bool getApplyAbility(){ return applyAbility; }
 
+	void applyEffect(SelectorMode mode);
+
+	//Ability timer
 	void startTimer();
 	void resetTimer(){ timer = start_timer; isTimerStart = false; }
 	bool isTimerDone(){ return timer <= 0.0f; }
@@ -61,14 +70,16 @@ public:
 	void Draw();
 	void DrawUI();
 
-	AbilityUI(float radius, Vector2 center, Color color, Abilities ability, float timer);
-	AbilityUI();
+	Circle(float radius, Vector2 center, Color color, Abilities ability, float timer);
+	Circle();
 
 };
 
 class AbilityManager{
 private:
-	std::vector<AbilityUI> circs;
+	SelectorMode mode{SelectorMode::Ability};
+
+	std::vector<Circle> circs;
 
 	int distCross;
 	int distLines;
@@ -79,7 +90,7 @@ private:
 	Player& player;
 
 	void SetCircleCoord();
-	void MakeCircleBigger(AbilityUI& e, int i);
+	void MakeCircleBigger(Circle& e, int i);
 public:
 
 	void Update();

@@ -10,7 +10,7 @@
 
 #define RAD 40
 
-void AbilityUI::Update(Player& player){
+void Circle::Update(Player& player){
 	if(isTimerStart && timer > 0){
 		timer -= GetFrameTime();
 		if(applyAbility){
@@ -45,32 +45,47 @@ void AbilityUI::Update(Player& player){
 
 }
 
-void AbilityUI::Draw(){
+void Circle::Draw(){
 	DrawTexturePro(texture, {0, 0, (float)texture.width, (float)texture.height}, {center.x-radius, center.y-radius, radius*2, radius*2}, {0, 0}, 0, WHITE);
 }
 
-void AbilityUI::DrawUI(){
+void Circle::DrawUI(){
 	if(isTimerStart)
 		DrawText(std::to_string((int)timer).c_str(), GetScreenWidth()-75, GetScreenHeight()-75, 60, GetRainbowColor());
 }
 
-void AbilityUI::startTimer(){
+void Circle::applyEffect(SelectorMode mode){
+	switch(mode){
+		case SelectorMode::Ability:
+			startTimer();
+		break;
+
+		case SelectorMode::Emotes:
+		break;
+
+		default:
+		break;
+	}
+
+}
+
+void Circle::startTimer(){
 	isTimerStart = true;
 	applyAbility = true;
 }
 
-AbilityUI::AbilityUI(float radius, Vector2 center, Color color, Abilities ability, float timer)
+Circle::Circle(float radius, Vector2 center, Color color, Abilities ability, float timer)
 : radius{radius}, center{center}, start_center{center}, color{color}, start_color{color}, ability{ability}, timer{timer}, start_timer{timer}{
 	texture = LoadTexture("res/img/inventory_outline.png");
 }
 
-AbilityUI::AbilityUI(){
+Circle::Circle(){
 }
 
 /* Ability Manager */
 AbilityManager::AbilityManager(Player& player) : player(player){
 	for(int i=0;i<6;i++){
-		auto temp = AbilityUI(RAD, {0,0}, BLACK, Abilities::None, 15.0f);
+		auto temp = Circle(RAD, {0,0}, BLACK, Abilities::None, 15.0f);
 		temp.setIDX(circs.size());
 		circs.push_back(temp);
 	}
@@ -85,8 +100,11 @@ AbilityManager::AbilityManager(Player& player) : player(player){
 }
 
 void AbilityManager::Update(){
+	if(!IsKeyDown(KEY_E)) mode = SelectorMode::Ability;
 	isDrawingCircs = false;
 	isStoringCircCoord = false;
+
+	if(IsKeyDown(KEY_E)) mode = SelectorMode::Emotes;
 
 	if(IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) SetCircleCoord();
 	for(int i=0;i<circs.size();i++){
@@ -99,11 +117,25 @@ void AbilityManager::Update(){
 
 void AbilityManager::Draw(){
 	if(isDrawingCircs)
-		for(auto& e : circs) e.Draw();
+		for(auto& e : circs){
+			e.Draw();
+			switch(mode){
+				case SelectorMode::Emotes:
+					DrawCircleV(e.getCurrentCenter(), e.getRadius(), {DARKPURPLE.r, DARKPURPLE.g, DARKPURPLE.b, 255/2});
+				break;
+				case SelectorMode::Ability:
+					//DrawCircleV(e.getCurrentCenter(), e.getRadius(), {DARKPURPLE.r, DARKPURPLE.g, DARKPURPLE.b, 255/2});
+				break;
+				default:
+				break;
+			}
+	}
 }
 
 void AbilityManager::DrawUI(){
 	for(auto& e : circs) e.DrawUI();
+	DrawText("Mode:",  10, GetScreenHeight()-30, 25, BLACK);
+	DrawText(std::to_string((int)mode).c_str(), 100, GetScreenHeight()-30, 25, BLACK);
 }
 
 void AbilityManager::SetCircleCoord(){
@@ -126,7 +158,7 @@ void AbilityManager::SetCircleCoord(){
 	isStoringCircCoord = false;
 }
 
-void AbilityManager::MakeCircleBigger(AbilityUI& e, int i){
+void AbilityManager::MakeCircleBigger(Circle& e, int i){
 	if(IsMouseButtonDown(MOUSE_BUTTON_RIGHT)){
 		isDrawingCircs = true;
 		if(isDrawingCircs && CheckCollisionPointCircle(GetMousePosition(), e.getCurrentCenter(), e.getRadius())){
@@ -164,6 +196,6 @@ void AbilityManager::MakeCircleBigger(AbilityUI& e, int i){
 		}
 	}
 	if(IsMouseButtonReleased(MOUSE_BUTTON_RIGHT) && CheckCollisionPointCircle(GetMousePosition(), e.getCurrentCenter(), e.getRadius()) && e.getAbility() != Abilities::None){
-		e.startTimer();
+		e.applyEffect(mode);
 	}
 }
