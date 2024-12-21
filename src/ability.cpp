@@ -45,8 +45,19 @@ void Circle::Update(Player& player){
 
 }
 
-void Circle::Draw(){
+void Circle::Draw(SelectorMode mode){
 	DrawTexturePro(texture, {0, 0, (float)texture.width, (float)texture.height}, {center.x-radius, center.y-radius, radius*2, radius*2}, {0, 0}, 0, WHITE);
+	if(CheckCollisionPointCircle(GetMousePosition(), getCurrentCenter(), getRadius()))
+	switch(mode){
+		case SelectorMode::Emotes:
+			DrawText(emoteToString[emote].c_str(), center.x-(radius), center.y-(radius), 20, BLACK);
+		break;
+		case SelectorMode::Ability:
+			DrawText(abilityToString[ability].c_str(), center.x-(radius), center.y-(radius), 20, BLACK);
+		break;
+		default:
+		break;
+	}
 }
 
 void Circle::DrawUI(){
@@ -97,6 +108,7 @@ AbilityManager::AbilityManager(Player& player) : player(player){
 	isDrawingCircs = false;
 
 	circs[0].setAbility(Abilities::FastWalk);
+	circs[0].setEmote(Emotes::BDR);
 }
 
 void AbilityManager::Update(){
@@ -118,7 +130,7 @@ void AbilityManager::Update(){
 void AbilityManager::Draw(){
 	if(isDrawingCircs)
 		for(auto& e : circs){
-			e.Draw();
+			e.Draw(mode);
 			switch(mode){
 				case SelectorMode::Emotes:
 					DrawCircleV(e.getCurrentCenter(), e.getRadius(), {DARKPURPLE.r, DARKPURPLE.g, DARKPURPLE.b, 255/2});
@@ -128,6 +140,8 @@ void AbilityManager::Draw(){
 				break;
 				default:
 				break;
+			}
+			if(mode == SelectorMode::Emotes){
 			}
 	}
 }
